@@ -15,19 +15,18 @@ self.addEventListener('install', function (event) {
         'https://introweb.tech/assets/json/3_moms-cornbread-stuffing.json',
         'https://introweb.tech/assets/json/4_50-indulgent-thanksgiving-side-dishes-for-any-holiday-gathering.json',
         'https://introweb.tech/assets/json/5_healthy-thanksgiving-recipe-crockpot-turkey-breast.json',
-        'https://introweb.tech/assets/json/6_one-pot-thanksgiving-dinner.json',
-      ]);
-    })
-  );
-});
+        'https://introweb.tech/assets/json/6_one-pot-thanksgiving-dinner.json',]);
+      })
+    );
+  });
 
-// Activates the service worker
-self.addEventListener('activate', function (event) {
-  event.waitUntil(self.clients.claim());
-});
+  // Activates the service worker
+  self.addEventListener('activate', function (event) {
+    event.waitUntil(self.clients.claim());
+  });
 
 // Intercept fetch requests and cache them
-self.addEventListener('fetch', function (event) {
+  self.addEventListener('fetch', function (event) {
   // We added some known URLs to the cache above, but tracking down every
   // subsequent network request URL and adding it manually would be very taxing.
   // We will be adding all of the resources not specified in the intiial cache
@@ -43,10 +42,10 @@ self.addEventListener('fetch', function (event) {
   //            above (CACHE_NAME) 
 
     // Open the cache
-    caches.open(CACHE_NAME).then((cache) => {
+    event.respondWith(caches.open(CACHE_NAME).then(async (cache) => {
       // Respond with the image from the cache or from the network
       return cache.match(event.request).then((cachedResponse) => {
-        return cachedResponse || fetch(event.request.url).then((fetchedResponse) => {
+        return cachedResponse || fetch(event.request).then((fetchedResponse) => {
           // Add the network response to the cache for future visits.
           // Note: we need to make a copy of the response to save it in
           // the cache and use the original as the request response.
@@ -55,8 +54,8 @@ self.addEventListener('fetch', function (event) {
           // Return the network response
           return fetchedResponse;
         });
-      });
-    });
+     });
+    }));
 
   // B8. TODO - If the request is in the cache, return with the cached version.
   //            Otherwise fetch the resource, add it to the cache, and return
